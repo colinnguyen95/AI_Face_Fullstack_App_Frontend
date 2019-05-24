@@ -1,11 +1,15 @@
 import React from 'react';
 import ProfileIcon from '../Profile/ProfileIcon';
+import Logo from '../Logo/Logo';
+import './Navigation.css'
 
 
-const Navigation = ({ onRouteChange, isSignedIn, toggleModal }) => {
+const Navigation = ({ onRouteChange, isSignedIn, toggleModal, name }) => {
     if (isSignedIn) {
       return (
-        <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
+        <nav className='navBar flex items-center' style={{display: 'flex', justifyContent: 'space-between'}}>
+          <Logo />
+          <p>{`Hello, ${name}`}</p>
           <ProfileIcon onRouteChange={onRouteChange} toggleModal={toggleModal} />
         </nav>
       );

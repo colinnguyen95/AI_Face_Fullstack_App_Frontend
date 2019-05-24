@@ -1,0 +1,9 @@
+.navBar{
+    height: 80px;
+    /* background: blue; */
+    border-bottom: 1px solid rgba(0,0,0,.15);
+    /* outline: 5px dotted green; */
+    background: linear-gradient(104.74deg, rgb(123, 66, 246,0.5) 0%, rgb(176, 30, 255, 0.5) 100%);
+    /* background: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ); */
+    width: 100%;
+}

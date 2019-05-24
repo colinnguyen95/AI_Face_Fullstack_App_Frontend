@@ -4,7 +4,6 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
-import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Profile from './components/Profile/Profile';
@@ -14,10 +13,10 @@ import './App.css';
 const particlesOptions = {
   particles: {
     number: {
-      value: 30,
+      value: 100,
       density: {
         enable: true,
-        value_area: 800
+        value_area: 600
       }
     }
   }
@@ -27,19 +26,18 @@ const initialState = {
   input: '',
   imageUrl: '',
   boxes: [],
-  /*Uncomment when deploying */
-  // route: 'signin',
-  /*To avoid signing in and out all the time in development*/
-  // route: 'home',
   route: 'signin',
-  isSignedIn: false,
   isProfileOpen: false,
+  isSignedIn: false,
+  celebName: '',
   user: {
     id: '',
     name: '',
     email: '',
     entries: 0,
-    joined: ''
+    joined: '',
+    age: 0,
+    pet: ''
   }
 }
 
@@ -47,6 +45,39 @@ class App extends Component {
   constructor() {
     super();
     this.state = initialState;
+  }
+
+  componentDidMount() {
+    const token = window.sessionStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:3000/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.id) {
+            fetch(`http://localhost:3000/profile/${data.id}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+              }
+            })
+            .then(response => response.json())
+            .then(user => {
+              if (user && user.email) {
+                this.loadUser(user)
+                this.onRouteChange('home');
+              }
+            })
+          }
+        })
+        .catch(console.log)
+    }
   }
 
   loadUser = (data) => {
@@ -59,12 +90,16 @@ class App extends Component {
     }})
   }
 
-  calculateFaceLocations = (data) => {
+  calculateFaceLocation = (data) => {
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
     return data.outputs[0].data.regions.map(face => {
       const clarifaiFace = face.region_info.bounding_box;
-      const image = document.getElementById('inputimage');
-      const width = Number(image.width);
-      const height = Number(image.height);
+      this.setState({celebName: face.data.face.identity.concepts[0].name }) 
+      console.log("BITCH");
+      console.log(data)
+      // console.log(clarifaiCelebrity);
       return {
         leftCol: clarifaiFace.left_col * width,
         topRow: clarifaiFace.top_row * height,
@@ -74,19 +109,23 @@ class App extends Component {
     });
   }
 
-  displayFaceBoxes = (boxes) => {
+  displayFaceBox = (boxes) => {
     this.setState({boxes: boxes});
   }
 
   onInputChange = (event) => {
     this.setState({input: event.target.value});
+    console.log(event);
   }
 
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
       fetch('http://localhost:3000/imageurl', {
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.sessionStorage.getItem('token')
+        },
         body: JSON.stringify({
           input: this.state.input
         })
@@ -96,7 +135,10 @@ class App extends Component {
         if (response) {
           fetch('http://localhost:3000/image', {
             method: 'put',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': window.sessionStorage.getItem('token')
+            },
             body: JSON.stringify({
               id: this.state.user.id
             })
@@ -108,7 +150,7 @@ class App extends Component {
             .catch(console.log)
 
         }
-        this.displayFaceBoxes(this.calculateFaceLocations(response))
+        this.displayFaceBox(this.calculateFaceLocation(response))
       })
       .catch(err => console.log(err));
   }
@@ -130,13 +172,13 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, boxes, isProfileOpen, user } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, isProfileOpen, user, celebName } = this.state;
     return (
       <div className="App">
-         <Particles className='particles'
+        <Particles className='particles'
           params={particlesOptions}
         />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} toggleModal={this.toggleModal}/>
+        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} toggleModal={this.toggleModal} name={this.state.user.name}/>
         {
           isProfileOpen &&
           <Modal>
@@ -145,11 +187,11 @@ class App extends Component {
         }
         { route === 'home'
           ? <div>
-              <Logo />
               <Rank
                 name={this.state.user.name}
                 entries={this.state.user.entries}
               />
+              <p>Celebrity name: {celebName}</p>
               <ImageLinkForm
                 onInputChange={this.onInputChange}
                 onButtonSubmit={this.onButtonSubmit}
