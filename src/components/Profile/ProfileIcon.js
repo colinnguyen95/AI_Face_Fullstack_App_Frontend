@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import Avatar from '../Profile/profile.png';
 import './ProfileIcon.css';
 
 class ProfileIcon extends React.Component {
@@ -18,7 +19,7 @@ class ProfileIcon extends React.Component {
 
   render() {
     return (
-      <div className="pa2 tc">
+      <div className="tc">
             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
               <DropdownToggle
                 tag="span"
@@ -27,8 +28,8 @@ class ProfileIcon extends React.Component {
                 aria-expanded={this.state.dropdownOpen}
               >
                 <img
-                  src="http://tachyons.io/img/logo.jpg"
-                  className="br-100 h3 w3 dib" alt="avatar" />
+                  src={Avatar}
+                  className="br-100 h3 w3 dib ma0 pointer" alt="avatar" />
               </DropdownToggle>
               <DropdownMenu className='b--transparent shadow-5 dropdown-menu-right' style={{marginTop: '20px', backgroundColor: 'rgba(255, 255, 255, 0.5)'}} >
                 <DropdownItem onClick={() => this.props.toggleModal()}>View Profile</DropdownItem>

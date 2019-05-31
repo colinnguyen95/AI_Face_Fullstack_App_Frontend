@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Avatar from '../Profile/profile.png';
 import './Profile.css';
 
 class Profile extends Component {
@@ -53,7 +54,7 @@ class Profile extends Component {
         <article className='br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center bg-white'>
           <main className='pa4 black-80 w-80'>
             <img
-              src='http://tachyons.io/img/logo.jpg'
+              src={Avatar}
               className='h3 w3 dib' alt='avatar'
             />
             <h1>{name}</h1>

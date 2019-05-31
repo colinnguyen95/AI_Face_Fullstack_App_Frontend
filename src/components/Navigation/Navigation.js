@@ -7,17 +7,25 @@ import './Navigation.css'
 const Navigation = ({ onRouteChange, isSignedIn, toggleModal, name }) => {
     if (isSignedIn) {
       return (
-        <nav className='navBar flex items-center' style={{display: 'flex', justifyContent: 'space-between'}}>
+        <nav className='navBar' style={{background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px'}}>
           <Logo />
-          <p>{`Hello, ${name}`}</p>
-          <ProfileIcon onRouteChange={onRouteChange} toggleModal={toggleModal} />
+          <div className='flex items-center'>
+            <p className='ma0 mr3 f3'>{`Hello, ${name}`}</p>
+            <ProfileIcon onRouteChange={onRouteChange} toggleModal={toggleModal} />
+          </div>
         </nav>
       );
     } else {
       return (
-        <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
-          <p onClick={() => onRouteChange('signin')} className='f3 link dim black underline pa3 pointer'>Sign In</p>
-          <p onClick={() => onRouteChange('register')} className='f3 link dim black underline pa3 pointer'>Register</p>
+        <nav style={{background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px'}}>
+          <div className='flex items-center'>
+            <Logo />
+            <p className='ma0 ml3 logoTitle'>AI FACE</p>
+          </div>
+          <div style={{background: '#fff', display: 'flex', justifyContent: 'flex-end'}}>
+            <p onClick={() => onRouteChange('signin')} className='f3 link dim pa3 pointer' style={{margin: 0}}>Sign In</p>
+            <p onClick={() => onRouteChange('register')} className='f3 link dim pa3 pointer white register' style={{margin: 0}}>Register</p>
+          </div>
         </nav>
       );
     }
